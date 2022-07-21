@@ -3,28 +3,38 @@ function ListNode(val, next) {
     this.next = (next === undefined ? null : next);
 }
 var addTwoNumbers = function (l1, l2) {
-    var a = buildNumber(l1);
-    var b = buildNumber(l2);
-    var result = a + b;
-    return buildLinkedList(result);
-};
+    let current1 = l1, current2 = l2, prev, head, carryForward = 0;
+    while (current1 != null || current2 != null) {
+        let a = current1 ? current1.val : 0;
+        let b = current2 ? current2.val : 0;
+        let number = a + b + carryForward;
 
-function buildNumber(firstNode) {
-    let current = firstNode, number = 0, power = 0;
-    while (current != null) {
-        number += current.val * Math.pow(10, power);
-        current = current.next;
-        power += 1;
-    }
-    return number;
-}
+        if (number > 9) {
+            if ((current1 === null || current1.next === null) && (current2 === null || current2.next === null)) {
+                while (number != 0) {
+                    digit = number % 10;
+                    node = new ListNode(digit, undefined);
+                    if (prev === undefined) {
+                        prev = node;
+                        head = node;
+                    } else {
+                        prev.next = node;
+                        prev = node;
+                    }
+                    number = Math.trunc(number / 10);
+                }
+                return head;
+            }
+            else {
+                carryForward = 1;
+                number = number % 10;
+            }
 
-function buildLinkedList(number) {
-    let prev, head = new ListNode(0, undefined), node;
-    while (number != 0) {
-        let digit = number % 10;
-        console.log(digit);
-        node = new ListNode(digit, undefined);
+        } else {
+            carryForward = 0;
+        }
+
+        node = new ListNode(number, undefined);
         if (prev === undefined) {
             prev = node;
             head = node;
@@ -32,10 +42,10 @@ function buildLinkedList(number) {
             prev.next = node;
             prev = node;
         }
-        number = Math.trunc(number / 10);
+        current1 = current1 === null ? current1 : current1.next;
+        current2 = current2 === null ? current2 : current2.next;
     }
     return head;
-}
-
+};
 let l1 = new ListNode(2, new ListNode(4, new ListNode(3, undefined)));
 let l2 = new ListNode(5, new ListNode(6, new ListNode(4, undefined)));
